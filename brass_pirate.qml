@@ -23,8 +23,6 @@ MuseScore {
 	property variant multiNoteOffset: -2.3;
 	property variant pitchOffsetScale: -5.0;
 	property variant verbose: true;
-	property variant baseKey: -2;
-
 	property variant rewindModeScoreStart: 0;
 	property variant rewindModeSelectionStart: 1;
 	property variant rewindModeSelectionEnd: 2;
@@ -41,7 +39,7 @@ MuseScore {
 		34: {valve: "13"},  // C
 		35: {valve: "23"},  // Db
 		36: {valve: "12"},  // D
-		37: {valve: "1"},   // Eb
+		37: {valve: "1"},   // Eb <-- Eb tuba root
 		38: {valve: "2"},   // E
 		39: {valve: "0"},   // F
 		40: {valve: "23"},  // Gb
@@ -54,41 +52,41 @@ MuseScore {
 		47: {valve: "2", slide: "5"},     // Db
 		48: {valve: "0", slide: "4"},     // D
 		49: {valve: "1", slide: "3"},     // Eb
-		50: {valve: "2", slide: "2"}, // E
-		51: {valve: "0", slide: "1"}, // F
-		52: {valve: "23", slide: "5"}, // Gb
-		53: {valve: "12", slide: "4"}, // G
-		54: {valve: "1", slide: "3"}, // Ab
-		55: {valve: "2", slide: "2"}, // A
-		56: {valve: "0", slide: "1"}, // Bb
-		57: {valve: "123", slide: "4"}, // B
-		58: {valve: "13", slide: "3"}, // C <-----
-		59: {valve: "2", slide: "2"}, // Db
+		50: {valve: "2", slide: "2"},     // E
+		51: {valve: "0", slide: "1"},     // F
+		52: {valve: "23", slide: "5"},    // Gb
+		53: {valve: "12", slide: "4"},    // G
+		54: {valve: "1", slide: "3"},     // Ab
+		55: {valve: "2", slide: "2"},     // A
+		56: {valve: "0", slide: "1"},     // Bb <-- Bb trumpet root
+		57: {valve: "123", slide: "4"},   // B
+		58: {valve: "13", slide: "3"},    // C
+		59: {valve: "2", slide: "2"},     // Db
 		60: {valve: "12", slide: "1\n4"}, // D
-		61: {valve: "1", slide: "3"}, // Eb
-		62: {valve: "2", slide: "2"}, // E
-		63: {valve: "0", slide: "1"}, // F
-		64: {valve: "23", slide: "3"}, // Gb
+		61: {valve: "1", slide: "3"},     // Eb
+		62: {valve: "2", slide: "2"},     // E
+		63: {valve: "0", slide: "1"},     // F
+		64: {valve: "23", slide: "3"},    // Gb
 		65: {valve: "12", slide: "2\n4"}, // G
-		66: {valve: "1", slide: "3\n1"}, // Ab
-		67: {valve: "2", slide: "2"}, // A
-		68: {valve: "0", slide: "1"}, // Bb
+		66: {valve: "1", slide: "3\n1"},  // Ab
+		67: {valve: "2", slide: "2"},     // A
+		68: {valve: "0", slide: "1"},     // Bb
 		69: {valve: "12"}, // B
-		70: {valve: "1"}, // C
-		71: {valve: "2"}, // Db
-		72: {valve: "0"}, // D
-		73: {valve: "1"}, // Eb
-		74: {valve: "2"}, // E
-		75: {valve: "0"}, // F
+		70: {valve: "1"},  // C
+		71: {valve: "2"},  // Db
+		72: {valve: "0"},  // D
+		73: {valve: "1"},  // Eb
+		74: {valve: "2"},  // E
+		75: {valve: "0"},  // F
 		76: {valve: "23"}, // Gb
 		77: {valve: "12"}, // G
-		78: {valve: "1"}, // Ab
-		79: {valve: "2"}, // A
-		80: {valve: "0"}, // Bb
+		78: {valve: "1"},  // Ab
+		79: {valve: "2"},  // A
+		80: {valve: "0"},  // Bb
 		81: {valve: "12"}, // B
-		82: {valve: "1"}, // C
-		83: {valve: "2"}, // Db
-		84: {valve: "0"}, // D
+		82: {valve: "1"},  // C
+		83: {valve: "2"},  // Db
+		84: {valve: "0"},  // D
 	}
 	
 	function getNoteName (tpc) {
@@ -141,13 +139,12 @@ MuseScore {
 			console.log(msg);
 		}
 	}
-	
-	function getLabel(instrument, notes) {
-		var sections = instrument.split(".");
-		if (sections == "undefined" || sections.length < 1)
-			return "";
-		var mode = sections[1] == "trombone" ? "slide" : "valve";
-		
+
+	function inspect(obj) {
+		log(JSON.stringify(obj, null, 2))
+	}
+
+	function getLabel(notes, labelMode, baseKey) {
 		var text = "";
 		for (var i = 0; i < notes.length; i++) {
 			if (text != "")
@@ -156,8 +153,8 @@ MuseScore {
 			var index = notes[i].pitch + baseKey;
 			log("Pitch: " + index + " | NoteName: " + getNoteName(notes[i].tpc));
 			if (index in noteTable  && notes[i].tieBack == null)
-				if (mode in noteTable[index])
-					text += qsTr(noteTable[index][mode]);
+				if (labelMode in noteTable[index])
+					text += qsTr(noteTable[index][labelMode]);
 		}
 		return text;
 	}
@@ -178,6 +175,7 @@ MuseScore {
 
 		cursor.rewind(rewindModeSelectionStart);
 
+		// find iteration range: [startStaff, endStaff]
 		var fullScore = false;
 		if (!cursor.segment) {
 			fullScore = true;
@@ -208,17 +206,56 @@ MuseScore {
 			}
 
 			// skip any non-brass instruments
-			var instrument = curScore.parts[staff].instrumentId;
-			if (instrument.substring(0, 6) != "brass.") {
-				log("skipped instrument: " + instrument)
+			var part = curScore.parts[staff];
+			var instrumentId = part.instrumentId;
+			if (instrumentId.substring(0, 6) != "brass.") {
+				log("skipped instrument: " + instrumentId);
 				continue;
 			}
 
+			// choose label mode (valve, valveEb or slide)
+			log("found instrument: " + instrumentId);
+
+			var sections = instrumentId.split(".");
+			if (sections == "undefined" || sections.length < 1)
+				return "";
+
+			var instrumentName = sections[1];
+
+			// pick label mode
+			var labelMode;
+			switch (instrumentName) {
+			case "trumpet":
+				labelMode = "valve";
+				break;
+			case "tuba":
+				labelMode = "valve";
+				break;
+			case "slide":
+				labelMode = "slide";
+				break;
+			default:
+				labelMode = "valve";
+				log("no fingering chart for instrument, defaulting to `valve`")
+			}
+
+			log("label mode: " + labelMode);
+
+			// pick base key
+			var partName = part.partName;
+			var baseKey = 0;
+
+			if ((instrumentName == "tuba") && (partName.includes("Eb") || partName.includes("E♭"))) {
+				log("base key: E♭ tuba (-7)");
+				baseKey = -7;
+			} else {
+				log("base key: B♭ trumpet (-2)");
+				baseKey = -2;
+			}
 			// find note ranges
 			var minPitch = 84;
 			var maxPitch = 26;
 			while (cursor.segment && (fullScore || cursor.tick < endTick)) {
-				log(cursor.element);
 				if (cursor.element.notes && cursor.element.notes.length > 0) {
 					var pitch = cursor.element.notes[0].pitch;
 					minPitch = pitch < minPitch ? pitch : minPitch;
@@ -226,7 +263,8 @@ MuseScore {
 				}
 				cursor.next();
 			}
-			log('minPitch='+minPitch+'; maxPitch='+maxPitch);
+			log('minPitch: ' + minPitch);
+			log('maxPitch: ' + maxPitch);
 
 			if (fullScore) {
 				cursor.rewind(rewindModeScoreStart);
@@ -234,17 +272,18 @@ MuseScore {
 				cursor.rewind(rewindModeSelectionStart);
 			}
 
+			// insert labels
 			while (cursor.segment && (fullScore || cursor.tick < endTick)) {
 				if (!cursor.element || cursor.element.type != Element.CHORD) {
 					cursor.next();
 					continue;
 				}
 				
-				var label = getLabel(instrument, cursor.element.notes);
+				var label = getLabel(cursor.element.notes, labelMode, baseKey);
 				if (label) {
 					var text = newElement(Element.STAFF_TEXT);
 					var pitchOffset = getNotePitchOffset(cursor.element.notes[0].pitch, minPitch, maxPitch);
-					log("offset=" + pitchOffset);
+					log("pitchOffset: " + pitchOffset);
 					text.text = label;
 					text.offsetY = minOffset + (cursor.element.notes.length - 1) * multiNoteOffset + pitchOffset;
 					cursor.add(text);
