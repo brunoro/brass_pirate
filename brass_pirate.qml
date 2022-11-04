@@ -22,10 +22,12 @@ MuseScore {
 	property variant multiNoteSeparator: "\n";
 	property variant multiNoteOffset: -2.3;
 	property variant pitchOffsetScale: -5.0;
-	
 	property variant verbose: true;
-
 	property variant baseKey: -2;
+
+	property variant rewindModeScoreStart: 0;
+	property variant rewindModeSelectionStart: 1;
+	property variant rewindModeSelectionEnd: 2;
 
 	property variant noteTable: {
 		26: {valve: "123"}, // E
@@ -92,51 +94,52 @@ MuseScore {
 	function getNoteName (tpc) {
 		var noteName = "";
 		switch (tpc) {
-			case -1: noteName = qsTranslate("InspectorAmbitus", "Fbb") + noteName; break;
-			case  0: noteName = qsTranslate("InspectorAmbitus", "Cbb") + noteName; break;
-			case  1: noteName = qsTranslate("InspectorAmbitus", "Gbb") + noteName; break;
-			case  2: noteName = qsTranslate("InspectorAmbitus", "Dbb") + noteName; break;
-			case  3: noteName = qsTranslate("InspectorAmbitus", "Abb") + noteName; break;
-			case  4: noteName = qsTranslate("InspectorAmbitus", "Ebb") + noteName; break;
-			case  5: noteName = qsTranslate("InspectorAmbitus", "Bbb") + noteName; break;
-			case  6: noteName = qsTranslate("InspectorAmbitus", "Fb")  + noteName; break;
-			case  7: noteName = qsTranslate("InspectorAmbitus", "Cb")  + noteName; break;
+		case -1: noteName = qsTranslate("InspectorAmbitus", "Fbb") + noteName; break;
+		case  0: noteName = qsTranslate("InspectorAmbitus", "Cbb") + noteName; break;
+		case  1: noteName = qsTranslate("InspectorAmbitus", "Gbb") + noteName; break;
+		case  2: noteName = qsTranslate("InspectorAmbitus", "Dbb") + noteName; break;
+		case  3: noteName = qsTranslate("InspectorAmbitus", "Abb") + noteName; break;
+		case  4: noteName = qsTranslate("InspectorAmbitus", "Ebb") + noteName; break;
+		case  5: noteName = qsTranslate("InspectorAmbitus", "Bbb") + noteName; break;
+		case  6: noteName = qsTranslate("InspectorAmbitus", "Fb")  + noteName; break;
+		case  7: noteName = qsTranslate("InspectorAmbitus", "Cb")  + noteName; break;
 
-			case  8: noteName = qsTranslate("InspectorAmbitus", "Gb")  + noteName; break;
-			case  9: noteName = qsTranslate("InspectorAmbitus", "Db")  + noteName; break;
-			case 10: noteName = qsTranslate("InspectorAmbitus", "Ab")  + noteName; break;
-			case 11: noteName = qsTranslate("InspectorAmbitus", "Eb")  + noteName; break;
-			case 12: noteName = qsTranslate("InspectorAmbitus", "Bb")  + noteName; break;
-			case 13: noteName = qsTranslate("InspectorAmbitus", "F")   + noteName; break;
-			case 14: noteName = qsTranslate("InspectorAmbitus", "C")   + noteName; break;
-			case 15: noteName = qsTranslate("InspectorAmbitus", "G")   + noteName; break;
-			case 16: noteName = qsTranslate("InspectorAmbitus", "D")   + noteName; break;
-			case 17: noteName = qsTranslate("InspectorAmbitus", "A")   + noteName; break;
-			case 18: noteName = qsTranslate("InspectorAmbitus", "E")   + noteName; break;
-			case 19: noteName = qsTranslate("InspectorAmbitus", "B")   + noteName; break;
+		case  8: noteName = qsTranslate("InspectorAmbitus", "Gb")  + noteName; break;
+		case  9: noteName = qsTranslate("InspectorAmbitus", "Db")  + noteName; break;
+		case 10: noteName = qsTranslate("InspectorAmbitus", "Ab")  + noteName; break;
+		case 11: noteName = qsTranslate("InspectorAmbitus", "Eb")  + noteName; break;
+		case 12: noteName = qsTranslate("InspectorAmbitus", "Bb")  + noteName; break;
+		case 13: noteName = qsTranslate("InspectorAmbitus", "F")   + noteName; break;
+		case 14: noteName = qsTranslate("InspectorAmbitus", "C")   + noteName; break;
+		case 15: noteName = qsTranslate("InspectorAmbitus", "G")   + noteName; break;
+		case 16: noteName = qsTranslate("InspectorAmbitus", "D")   + noteName; break;
+		case 17: noteName = qsTranslate("InspectorAmbitus", "A")   + noteName; break;
+		case 18: noteName = qsTranslate("InspectorAmbitus", "E")   + noteName; break;
+		case 19: noteName = qsTranslate("InspectorAmbitus", "B")   + noteName; break;
 
-			case 20: noteName = qsTranslate("InspectorAmbitus", "F♯")  + noteName; break;
-			case 21: noteName = qsTranslate("InspectorAmbitus", "C♯")  + noteName; break;
-			case 22: noteName = qsTranslate("InspectorAmbitus", "G♯")  + noteName; break;
-			case 23: noteName = qsTranslate("InspectorAmbitus", "D♯")  + noteName; break;
-			case 24: noteName = qsTranslate("InspectorAmbitus", "A♯")  + noteName; break;
-			case 25: noteName = qsTranslate("InspectorAmbitus", "E♯")  + noteName; break;
-			case 26: noteName = qsTranslate("InspectorAmbitus", "B♯")  + noteName; break;
-			case 27: noteName = qsTranslate("InspectorAmbitus", "F♯♯") + noteName; break;
-			case 28: noteName = qsTranslate("InspectorAmbitus", "C♯♯") + noteName; break;
-			case 29: noteName = qsTranslate("InspectorAmbitus", "G♯♯") + noteName; break;
-			case 30: noteName = qsTranslate("InspectorAmbitus", "D♯♯") + noteName; break;
-			case 31: noteName = qsTranslate("InspectorAmbitus", "A♯♯") + noteName; break;
-			case 32: noteName = qsTranslate("InspectorAmbitus", "E♯♯") + noteName; break;
-			case 33: noteName = qsTranslate("InspectorAmbitus", "B♯♯") + noteName; break;
-			default: noteName = qsTr("?")   + noteName; break;
+		case 20: noteName = qsTranslate("InspectorAmbitus", "F♯")  + noteName; break;
+		case 21: noteName = qsTranslate("InspectorAmbitus", "C♯")  + noteName; break;
+		case 22: noteName = qsTranslate("InspectorAmbitus", "G♯")  + noteName; break;
+		case 23: noteName = qsTranslate("InspectorAmbitus", "D♯")  + noteName; break;
+		case 24: noteName = qsTranslate("InspectorAmbitus", "A♯")  + noteName; break;
+		case 25: noteName = qsTranslate("InspectorAmbitus", "E♯")  + noteName; break;
+		case 26: noteName = qsTranslate("InspectorAmbitus", "B♯")  + noteName; break;
+		case 27: noteName = qsTranslate("InspectorAmbitus", "F♯♯") + noteName; break;
+		case 28: noteName = qsTranslate("InspectorAmbitus", "C♯♯") + noteName; break;
+		case 29: noteName = qsTranslate("InspectorAmbitus", "G♯♯") + noteName; break;
+		case 30: noteName = qsTranslate("InspectorAmbitus", "D♯♯") + noteName; break;
+		case 31: noteName = qsTranslate("InspectorAmbitus", "A♯♯") + noteName; break;
+		case 32: noteName = qsTranslate("InspectorAmbitus", "E♯♯") + noteName; break;
+		case 33: noteName = qsTranslate("InspectorAmbitus", "B♯♯") + noteName; break;
+		default: noteName = qsTr("?")   + noteName; break;
 		} 
 		return noteName;
-   }
-   
-   function log(msg) {
-		if (verbose)
+	}
+
+	function log(msg) {
+		if (verbose) {
 			console.log(msg);
+		}
 	}
 	
 	function getLabel(instrument, notes) {
@@ -160,10 +163,9 @@ MuseScore {
 	}
 
 	function getNotePitchOffset(pitch, minPitch, maxPitch) {
-		return (pitch - minPitch) / (maxPitch - minPitch);
+		return (pitch - minPitch) / (maxPitch - minPitch) * pitchOffsetScale;
 	}
 
-	
 	onRun: {
 		if (typeof curScore === 'undefined') {
 			Qt.quit();
@@ -174,7 +176,7 @@ MuseScore {
 		var endStaff;
 		var endTick;
 
-		cursor.rewind(1);
+		cursor.rewind(rewindModeSelectionStart);
 
 		var fullScore = false;
 		if (!cursor.segment) {
@@ -183,7 +185,7 @@ MuseScore {
 			endStaff = curScore.nstaves - 1;
 		} else {
 			startStaff = cursor.staffIdx;
-			cursor.rewind(2);
+			cursor.rewind(rewindModeSelectionEnd);
 			if (cursor.tick == 0) {
 				// this happens when the selection includes
 				// the last measure of the score.
@@ -199,10 +201,10 @@ MuseScore {
 			cursor.voice = 0;
 			cursor.staffIdx = staff;
 
-			cursor.rewind(1)
-			// rewind to the beggining of the score if there's no selection
 			if (fullScore) {
-				cursor.rewind(0);
+				cursor.rewind(rewindModeScoreStart);
+			} else {
+				cursor.rewind(rewindModeSelectionStart);
 			}
 
 			// skip any non-brass instruments
@@ -216,6 +218,7 @@ MuseScore {
 			var minPitch = 84;
 			var maxPitch = 26;
 			while (cursor.segment && (fullScore || cursor.tick < endTick)) {
+				log(cursor.element);
 				if (cursor.element.notes && cursor.element.notes.length > 0) {
 					var pitch = cursor.element.notes[0].pitch;
 					minPitch = pitch < minPitch ? pitch : minPitch;
@@ -225,12 +228,11 @@ MuseScore {
 			}
 			log('minPitch='+minPitch+'; maxPitch='+maxPitch);
 
-			cursor.rewind(1)
-			// rewind to the beggining of the score if there's no selection
 			if (fullScore) {
-				cursor.rewind(0);
+				cursor.rewind(rewindModeScoreStart);
+			} else {
+				cursor.rewind(rewindModeSelectionStart);
 			}
-
 
 			while (cursor.segment && (fullScore || cursor.tick < endTick)) {
 				if (!cursor.element || cursor.element.type != Element.CHORD) {
@@ -241,7 +243,7 @@ MuseScore {
 				var label = getLabel(instrument, cursor.element.notes);
 				if (label) {
 					var text = newElement(Element.STAFF_TEXT);
-					var pitchOffset = getNotePitchOffset(cursor.element.notes[0].pitch, minPitch, maxPitch) * pitchOffsetScale;
+					var pitchOffset = getNotePitchOffset(cursor.element.notes[0].pitch, minPitch, maxPitch);
 					log("offset=" + pitchOffset);
 					text.text = label;
 					text.offsetY = minOffset + (cursor.element.notes.length - 1) * multiNoteOffset + pitchOffset;
