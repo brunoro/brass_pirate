@@ -47,8 +47,8 @@ MuseScore {
 		42: {valve: "1", slide: "3"},     // Ab
 		43: {valve: "2", slide: "2"},     // A
 		44: {valve: "0", slide: "1"},     // Bb
-		45: {valve: "12", slide: "7\n2"}, // B
-		46: {valve: "1", slide: "6\n1"},  // C
+		45: {valve: "12", slide: "2"}, // B
+		46: {valve: "1", slide: "1"},  // C
 		47: {valve: "2", slide: "5"},     // Db
 		48: {valve: "0", slide: "4"},     // D
 		49: {valve: "1", slide: "3"},     // Eb
@@ -62,13 +62,13 @@ MuseScore {
 		57: {valve: "123", slide: "4"},   // B
 		58: {valve: "13", slide: "3"},    // C
 		59: {valve: "2", slide: "2"},     // Db
-		60: {valve: "12", slide: "1\n4"}, // D
+		60: {valve: "12", slide: "1"}, // D
 		61: {valve: "1", slide: "3"},     // Eb
 		62: {valve: "2", slide: "2"},     // E
 		63: {valve: "0", slide: "1"},     // F
 		64: {valve: "23", slide: "3"},    // Gb
-		65: {valve: "12", slide: "2\n4"}, // G
-		66: {valve: "1", slide: "3\n1"},  // Ab
+		65: {valve: "12", slide: "2"}, // G
+		66: {valve: "1", slide: "1"},  // Ab
 		67: {valve: "2", slide: "2"},     // A
 		68: {valve: "0", slide: "1"},     // Bb
 		69: {valve: "12"}, // B
