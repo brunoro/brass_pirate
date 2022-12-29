@@ -197,13 +197,13 @@ MuseScore {
 
 		for (var staff = startStaff; staff <= endStaff; staff++) {
 			cursor.voice = 0;
-			cursor.staffIdx = staff;
 
 			if (fullScore) {
 				cursor.rewind(rewindModeScoreStart);
 			} else {
 				cursor.rewind(rewindModeSelectionStart);
 			}
+			cursor.staffIdx = staff;
 
 			// skip any non-brass instruments
 			var part = curScore.parts[staff];
@@ -271,6 +271,7 @@ MuseScore {
 			} else {
 				cursor.rewind(rewindModeSelectionStart);
 			}
+			cursor.staffIdx = staff;
 
 			// insert labels
 			while (cursor.segment && (fullScore || cursor.tick < endTick)) {
