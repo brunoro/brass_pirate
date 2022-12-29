@@ -231,7 +231,7 @@ MuseScore {
 			case "tuba":
 				labelMode = "valve";
 				break;
-			case "slide":
+			case "trombone":
 				labelMode = "slide";
 				break;
 			default:
